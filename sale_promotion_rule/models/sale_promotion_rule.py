@@ -5,6 +5,7 @@
 
 import logging
 from collections import defaultdict
+import datetime
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
@@ -450,8 +451,11 @@ according to the strategy
         taxes = self.discount_product_id.taxes_id
         if order.fiscal_position_id:
             taxes = order.fiscal_position_id.map_tax(taxes)
-        price = self.discount_amount_currency_id.compute(
-            from_amount=self.discount_amount, to_currency=order.currency_id
+        price = self.discount_amount_currency_id._convert(
+            from_amount=self.discount_amount,
+            to_currency=order.currency_id,
+            company=order.company_id,
+            date=datetime.date.today(),
         )
         if taxes:
             price_precision_digits = self.env[
@@ -498,8 +502,11 @@ according to the strategy
         amount according to the price decision while the computed price doesn't
         match the expected amount or the sign of the difference changes
         """
-        expected_discount = self.discount_amount_currency_id.compute(
-            from_amount=self.discount_amount, to_currency=order.currency_id
+        expected_discount = self.discount_amount_currency_id._convert(
+            from_amount=self.discount_amount,
+            to_currency=order.currency_id,
+            company=order.company_id,
+            date=datetime.date.today(),
         )
         amount_type = "total_included"
         if self.discount_type == "amount_tax_excluded":
