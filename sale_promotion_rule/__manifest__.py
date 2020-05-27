@@ -12,7 +12,7 @@
     "license": "AGPL-3",
     "application": False,
     "installable": True,
-    "depends": ["sale",],
+    "depends": ["sale"],
     "data": [
         "wizards/sale_order_add_coupon.xml",
         "views/sale_order.xml",
